@@ -1,20 +1,58 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
+from django.utils.timezone import now
 # Create your models here.
 
-# == User models 
 
-class User(models.Model):
+# == Custom User Manager == 
+
+class UserManager(BaseUserManager):
+
+    def create_user(self,email,password=None,**extrafields):
+        if not email:
+            raise ValueError("The email field must be set ")
+        email = self.normalize_email(email)
+        user = self.model(email=email , **extrafields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+    
+    def create_superuser(self,email,password=None,**extrafields):
+        extrafields.setdefault('is_staff',True)
+        extrafields.setdefault('is_superuser',True)
+
+        if extrafields.get('is_staff') is not True:
+            raise ValueError("Superuser must have is_staff=True. ")
+
+        if extrafields.get('is_superuser')is not True:
+            raise ValueError("Superuser must have is_superuser=True. ")
+
+        return self.create_user(email,password,**extrafields)
+
+
+# == User models ==
+
+class User(AbstractBaseUser ,PermissionsMixin):
     email = models.EmailField(primary_key=True)
-    username = models.CharField(max_length=200)
+    username = models.CharField(max_length=200 , blank=True ,null= True)
     password_hash = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.CharField(default=False)
-    last_login = models.DateTimeField()
-    date_joined = models.DateTimeField(auto_now_add=True)
-    auth_provider = models.CharField(max_length=255)
-    oauth_token = models.JSONField()
+    is_superuser = models.BooleanField(default=False)
+    last_login = models.DateTimeField(default=now)
+    date_joined = models.DateTimeField(default=now)
+    auth_provider = models.CharField(max_length=255 , blank=True ,null= True)
+    oauth_token = models.JSONField(blank = True,null=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+
+    def __str__(self):
+        return self.email
+    
 
 
 # == User Profile models
@@ -23,14 +61,19 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User , on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=100)
-    profile_picture = models.URLField()
-    time_zone = models.CharField(max_length=50)
-    preferences = models.JSONField()
-    language = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=100 , blank=True)
+    profile_picture = models.URLField(blank=True)
+    time_zone = models.CharField(max_length=50 , blank=True , null= True)
+    preferences = models.JSONField(blank=True ,null = True)
+    language = models.CharField(max_length=50 , blank=True , null= True)
     email_verified = models.BooleanField(default=False)
     phone_verified = models.BooleanField(default=False)
-    last_password_change = models.DateTimeField()
+    last_password_change = models.DateTimeField(blank=True , null= True) 
+
+
+    def __str__(self):
+        return f"{self.user.email}'s profile"
+    
 
 
 # == Usernotifications models
