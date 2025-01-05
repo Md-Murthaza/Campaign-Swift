@@ -7,6 +7,8 @@ from .models import UserNotification
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+
+from django.contrib.auth import get_user_model
 # Create your views here.
 
 
@@ -71,5 +73,6 @@ def update_user_profile(request):
         return Response(serilaizer.data , status=status.HTTP_200_OK)
     
     return Response(serilaizer.errors ,status=status.HTTP_400_BAD_REQUEST)
+
 
 
