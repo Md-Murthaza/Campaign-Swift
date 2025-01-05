@@ -35,14 +35,14 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser ,PermissionsMixin):
     email = models.EmailField(primary_key=True)
     username = models.CharField(max_length=200 , blank=True ,null= True)
-    password_hash = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     last_login = models.DateTimeField(default=now)
     date_joined = models.DateTimeField(default=now)
     auth_provider = models.CharField(max_length=255 , blank=True ,null= True)
-    oauth_token = models.JSONField(blank = True,null=True)
+    oauth_token = models.JSONField(blank=True, null=True)
 
     objects = UserManager()
 

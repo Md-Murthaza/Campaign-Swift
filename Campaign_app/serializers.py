@@ -12,11 +12,11 @@ class UserSerializer(serializers.ModelSerializer):
 # == User Registration Serializer == 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    password_hash = serializers.CharField(write_only=True , min_length=8)
+    password = serializers.CharField(write_only=True , min_length=8)
     
     class Meta:
         model = User
-        fields = ['email','username','password_hash']
+        fields = ['email','username','password']
 
     def validate_password(self,value):
         if len(value)< 8:
@@ -27,11 +27,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         user = User.objects.create_user(
             email = validated_data['email'],
-            password_hash = validated_data['password_hash'],
+            
             username = validated_data.get('username','')
 
 
         )
+        user.set_password(validated_data['password'])
+        user.save()
         return user
 
 
