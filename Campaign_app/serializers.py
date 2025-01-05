@@ -44,18 +44,18 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['user','first_name','last_name','phone_number','profile_picture','time_zone','preferences','language','email_verified','phone_verified','last_password_change']
 
-        def update(self,instance,validated_data):
-            user_data = validated_data.pop('user',None)
-            if user_data:
-                for key, value  in user_data.items():
-                    setattr(instance.user,key, value)
+    def update(self,instance,validated_data):
+        user_data = validated_data.pop('user',None)
+        if user_data:
+            for key, value  in user_data.items():
+                setattr(instance.user,key, value)
                 instance.user.save()
-            return super().update(instance,validated_data)
+        return super().update(instance,validated_data)
 
 
 # == UserNotificationSeru=ializer == 
 
-class UserNotificationSerilaizer(serializers.ModelSerializer):
+class UserNotificationSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
     class Meta:
@@ -87,7 +87,7 @@ class AgencyBillingSerilaizer(serializers.ModelSerializer):
 
     class Meta:
         model = AgencyBilling
-        fields = '_all__'
+        fields = '__all__'
 
     
 #== AgencyTeamMemberSerialzier == 
