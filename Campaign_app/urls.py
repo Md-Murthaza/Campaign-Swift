@@ -26,10 +26,5 @@ urlpatterns = [
     path('profile/update/',views.update_user_profile,name='update_user_profile'),
 
 
-    #==jwt token api ==#
-
-    path('api/token/',TokenObtainPairView.as_view(),name='token_obtain_pair'),
-
-    path('api/token/refresh/',TokenRefreshView.as_view(),name='token_refresh'),
 
 ]

@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view , permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserRegisterSerializer , UserProfileSerializer , UserNotificationSerializer
-from .models import UserNotification
+from .models import UserNotification,User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
@@ -30,22 +30,25 @@ def user_register(request):
 @api_view(['POST'])
 
 def user_login(request):
-    if request.method == 'POST':
-        email = request.data.get('email')
-        password = request.data.get('password')
+    email = request.data.get('email')
+    password = request.data.get('password')
 
 
-        if not email or not password:
-            return Response({"message":" Email and Password  are required! "},status=status.HTTP_400_BAD_REQUEST)
 
-        user = authenticate(request,email=email,password=password)
 
-        if user:
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'access_token':str(refresh.access_token),
-                'refresh_token':str(refresh)},status=status.HTTP_200_OK)
 
+    if not email or not password:
+        return Response({"message":" Email and Password  are required! "},status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.filter(email=email).first()    
+
+        
+    if user and user.check_password(password):
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)},status=status.HTTP_200_OK)
+    else:
         return Response({"error": "Invalid email or password " },status=status.HTTP_401_UNAUTHORIZED)
 
 

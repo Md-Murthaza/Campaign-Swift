@@ -27,13 +27,13 @@ class UserManager(BaseUserManager):
         if extrafields.get('is_superuser')is not True:
             raise ValueError("Superuser must have is_superuser=True. ")
 
-        return self.create_user(email,password,**extrafields)
+        return self.create_user(email, password, **extrafields)
 
 
 # == User models ==
 
 class User(AbstractBaseUser ,PermissionsMixin):
-    email = models.EmailField(primary_key=True)
+    email = models.EmailField(unique=True)
     username = models.CharField(max_length=200 , blank=True ,null= True)
     password = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
