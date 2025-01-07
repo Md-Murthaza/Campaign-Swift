@@ -47,7 +47,12 @@ def user_login(request):
         refresh = RefreshToken.for_user(user)
         return Response({
             'refresh': str(refresh),
-            'access': str(refresh.access_token)},status=status.HTTP_200_OK)
+            'access': str(refresh.access_token),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'username': user.username,
+                'date_joined': user.date_joined }},status=status.HTTP_200_OK)
     else:
         return Response({"error": "Invalid email or password " },status=status.HTTP_401_UNAUTHORIZED)
 

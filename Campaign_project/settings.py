@@ -136,7 +136,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'SIMPLE_JWT': {
-        'USER_ID_FIELD': 'email',  # This should be the field used for the user's identifier
+        'USER_ID_FIELD': 'id',  # This should be the field used for the user's identifier
     }
 }
 
@@ -149,7 +149,7 @@ AUTHENTICATION_BACKENDS = [
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=2),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     
 }
